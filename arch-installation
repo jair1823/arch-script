@@ -51,8 +51,8 @@ select_editor() {
 #! select mirrors
 select_mirrors() {
   # todo Lista de seleccion
-  country_code = "FR"
-  country_name = "Unite States"
+  country_code="FR"
+  country_name="Unite States"
   url="https://www.archlinux.org/mirrorlist/?country=${country_code}&use_mirror_status=on"
   #archivo temporal
   tempFile=$(mktemp --suffix=mirrorlist)
