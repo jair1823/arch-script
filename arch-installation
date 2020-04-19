@@ -1,0 +1,60 @@
+#!/bin/bash
+# *--------------------------------------------
+# !Created by jair1823
+# *--------------------------------------------
+# Based on <https://github.com/helmuthdu/aui>
+
+# *--------------------------------------------
+# !Check help funtions file
+if [ -e $(pwd)/help-funtions ]; then
+  source help-funtions
+else
+  echo "missing file: help-funtions"
+  exit 1
+fi
+# *--------------------------------------------
+
+# *--------------------------------------------
+# !Before Menu
+# *--------------------------------------------
+
+# *--------------------------------------------
+# !MAIN MENU
+# *--------------------------------------------
+while true; do
+  print_title "Opciones de instalacion"
+  echo "  1) $(mainmenu_item "${checklist[1]}" "Seleccion keymap" "${KEYMAP}")"
+  echo ""
+  echo "  2) $(mainmenu_item "${checklist[2]}" "Option 2" "2")"
+  echo ""
+  echo "  3) $(mainmenu_item "${checklist[3]}" "Option 3" "3")"
+  echo ""
+  echo "  d) done"
+  echo ""
+  read option
+  case $option in
+  1)
+    echo "Option 1"
+    checklist[1]=1
+    KEYMAP=vim
+    wait_enter
+    ;;
+  2)
+    echo "Option 2"
+    checklist[2]=1
+    wait_enter
+    ;;
+  3)
+    echo "Option 3"
+    checklist[3]=1
+    wait_enter
+    ;;
+  d)
+    wait_enter 0
+    ;;
+  *)
+    wait_enter 0
+    ;;
+  esac
+
+done

@@ -1,0 +1,102 @@
+#!/bin/bash
+# --------------------------------------------
+# Created by jair1823
+# --------------------------------------------
+# Based on <https://github.com/helmuthdu/aui>
+
+# *--------------------------------------------
+# !Colors
+Bold=$(tput bold)
+Underline=$(tput sgr 0 1)
+Reset=$(tput sgr0)
+# Regular Colors
+Red=$(tput setaf 1)
+Green=$(tput setaf 2)
+Yellow=$(tput setaf 3)
+Blue=$(tput setaf 4)
+Purple=$(tput setaf 5)
+Cyan=$(tput setaf 6)
+White=$(tput setaf 7)
+# Bold
+BRed=${Bold}${Red}
+BGreen=${Bold}${Green}
+BYellow=${Bold}${Yellow}
+BBlue=${Bold}${Blue}
+BPurple=${Bold}${Purple}
+BCyan=${Bold}${Cyan}
+BWhite=${Bold}${White}
+# *--------------------------------------------
+
+# *--------------------------------------------
+# !Variables Globales
+checklist=(0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0) #16
+# *--------------------------------------------
+
+# *--------------------------------------------
+# !Funcion que espera el enter del usuario
+wait_enter() {
+  if [ $# -eq 0 ]; then
+    read -e -sn 1 -p "${BYellow}Press enter to continue...${Reset}"
+  else
+    read -e -sn 1 -p "${BYellow}Press enter to exit...${Reset}"
+    exit
+  fi
+}
+# *--------------------------------------------
+
+# *--------------------------------------------
+# ! Distintos prints
+print_line() {
+  printf "%$(tput cols)s\n" | tr ' ' '-'
+}
+
+print_title() {
+  clear
+  print_line
+  echo -e "# ${Bold}$1${Reset}"
+  print_line
+  echo ""
+}
+
+print_info() {
+  #Console width number
+  T_COLS=$(tput cols)
+  echo -e "${Bold}$1${Reset}\n" | fold -sw $(($T_COLS - 18)) | sed 's/^/\t/'
+}
+
+print_warning() {
+  T_COLS=$(tput cols)
+  echo -e "${BYellow}$1${Reset}\n" | fold -sw $(($T_COLS - 1))
+}
+print_danger() {
+  T_COLS=$(tput cols)
+  echo -e "${BRed}$1${Reset}\n" | fold -sw $(($T_COLS - 1)) | sed 's/^/\t/'
+}
+
+print_success() {
+  T_COLS=$(tput cols)
+  echo -e "${BGreen}$1${Reset}\n" | fold -sw $(($T_COLS - 1)) | sed 's/^/\t/'
+}
+
+invalid_option() {
+  print_line
+  echo "Invalid option. Try another one."
+  wait_enter
+}
+# *--------------------------------------------
+
+# *--------------------------------------------
+# ! Funciones para el menu
+checkbox() {
+  #display [X] or [ ]
+  [[ "$1" -eq 1 ]] && echo -e "${BBlue}[${Reset}${Bold}X${BBlue}]${Reset}" || echo -e "${BBlue}[ ${BBlue}]${Reset}"
+}
+
+mainmenu_item() {
+  #if the task is done make sure we get the state
+  if [ $1 -eq 1 -a "$3" != "" ]; then
+    state="${BGreen}[${Reset}$3${BGreen}]${Reset}"
+  fi
+  echo -e "$(checkbox "$1") ${Bold}$2${Reset} ${state}"
+}
+# *--------------------------------------------
