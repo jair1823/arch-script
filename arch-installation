@@ -106,7 +106,7 @@ while true; do
   echo ""
   echo "  1) $(mainmenu_item "${checklist[1]}" "Seleccion keymap" "${KEYMAP}")"
   echo "  2) $(mainmenu_item "${checklist[2]}" "Select Editor" "${EDITOR}")"
-  echo "  3) $(mainmenu_item "${checklist[3]}" "Option 3" "3")"
+  echo "  3) $(mainmenu_item "${checklist[3]}" "Select Mirrors" "${country_name} ${country_code}")"
   echo ""
   echo "  d) done"
   echo ""
@@ -124,7 +124,7 @@ while true; do
     wait_enter
     ;;
   3)
-    echo "Option 3"
+    select_mirrors
     checklist[3]=1
     wait_enter
     ;;
