@@ -29,11 +29,19 @@ BWhite=${Bold}${White}
 
 # *--------------------------------------------
 # !Variables Globales
+
 checklist=(0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0) #16
+IP_TEST=google.com
+UEFI=0
+SUCCESS=0
+FAIL=1
+EFIVARS_DIR=/sys/firmware/efi/efivars
+# !prompt
+prompt1="Enter your option: "
 # *--------------------------------------------
 
 # *--------------------------------------------
-# !Funcion que espera el enter del usuario
+#! Funcion que espera el enter del usuario
 wait_enter() {
   if [ $# -eq 0 ]; then
     read -e -sn 1 -p "${BYellow}Press enter to continue...${Reset}"
@@ -42,6 +50,13 @@ wait_enter() {
     exit
   fi
 }
+#! Revisar si un elemento existe en lista
+contains_element() {
+  for e in "${@:2}"; do
+    [[ $e == $1 ]] && break
+  done
+}
+
 # *--------------------------------------------
 
 # *--------------------------------------------
@@ -68,6 +83,7 @@ print_warning() {
   T_COLS=$(tput cols)
   echo -e "${BYellow}$1${Reset}\n" | fold -sw $(($T_COLS - 1))
 }
+
 print_danger() {
   T_COLS=$(tput cols)
   echo -e "${BRed}$1${Reset}\n" | fold -sw $(($T_COLS - 1)) | sed 's/^/\t/'
@@ -91,12 +107,46 @@ checkbox() {
   #display [X] or [ ]
   [[ "$1" -eq 1 ]] && echo -e "${BBlue}[${Reset}${Bold}X${BBlue}]${Reset}" || echo -e "${BBlue}[ ${BBlue}]${Reset}"
 }
-
 mainmenu_item() {
   #if the task is done make sure we get the state
   if [ $1 -eq 1 -a "$3" != "" ]; then
     state="${BGreen}[${Reset}$3${BGreen}]${Reset}"
   fi
   echo -e "$(checkbox "$1") ${Bold}$2${Reset} ${state}"
+}
+# *--------------------------------------------
+
+# *--------------------------------------------
+# ! Funciones de lectura
+# *--------------------------------------------
+
+# *--------------------------------------------
+#! Intenet Connection
+check_connection() {
+  #print_title "Test Internet"
+  #print_info "Testing ping to ${IP_TEST}"
+  ping -c 2 $IP_TEST &>/dev/null
+  if [ "$?" = $FAIL ]; then
+    print_danger "Internet does not work"
+    wait_enter 0
+  fi
+}
+#! Boot System - BIOS/EFI
+check_boot_system() {
+  #print_title "Checking if you use BIOS or EFI"
+  #print_info "Searching efi vars in ${EFIVARS_DIR}"
+  BOOT_SYSTEM=BIOS
+  ls $EFIVARS_DIR &>/dev/null
+  if [ $? -eq $SUCCESS ]; then
+    UEFI=1
+    BOOT_SYSTEM=EFI
+    #print_success "Your system is EFI"
+    #print_info "Recommended partitions are:"
+    #print_info "sda1  /mnt/boot #260-512M (550M)\nsda2  /mnt  #Remainder of the divece \nsda3 [swap]  #More than 512M"
+    #else
+    #print_success "Your system is BIOS"
+    #print_info "Recommended partitions are:"
+    #print_info "sda1 /mnt  #Remainder of the divece \nsda2 [swap]  #More than 512M"
+  fi
 }
 # *--------------------------------------------

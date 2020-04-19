@@ -15,32 +15,111 @@ fi
 # *--------------------------------------------
 
 # *--------------------------------------------
+#! select keymap
+select_keymap() {
+  print_title "KEYMAP - https://wiki.archlinux.org/index.php/KEYMAP"
+  keymap_list=("us" "us-acentos")
+  PS3="$prompt1"
+  print_info "El KEYMAP define la distribucion del teclado."
+  echo "keymap list in /usr/share/kbd/keymaps"
+  select KEYMAP in "${keymap_list[@]}"; do
+    if contains_element "$KEYMAP" "${keymap_list[@]}"; then
+      loadkeys "$KEYMAP"
+      break
+    else
+      invalid_option
+    fi
+  done
+}
+
+#! select editor
+select_editor() {
+  print_title "Text Editor - https://wiki.archlinux.org/"
+  editor_list=("vim" "nvim" "nano")
+  PS3="$prompt1"
+  print_info "Se selecciona e instala el editor que se usara por defecto."
+  select EDITOR in "${editor_list[@]}"; do
+    if contains_element "$EDITOR" "${editor_list[@]}"; then
+      pacman -Sy --needed "$EDITOR"
+      break
+    else
+      invalid_option
+    fi
+  done
+}
+
+#! select mirrors
+select_mirrors() {
+  # todo Lista de seleccion
+  country_code = "FR"
+  country_name = "Unite States"
+  url="https://www.archlinux.org/mirrorlist/?country=${country_code}&use_mirror_status=on"
+  #archivo temporal
+  tempFile=$(mktemp --suffix=mirrorlist)
+
+  curl -so ${tempFile} ${url}
+  sed -i 's/^#Server/Server/g' ${tempFile}
+
+  #copiando el nuevo mirrorlist solo si no esta vacio
+  if [[ -s ${tmpfile} ]]; then
+    {
+      echo " Backing up the original mirrorlist..."
+      mv -i /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.orig
+    } &&
+      {
+        echo " Rotating the new list into place..."
+        mv -i ${tmpfile} /etc/pacman.d/mirrorlist
+      }
+  else
+    echo " Unable to update, could not download list."
+  fi
+  # better repo should go first
+  pacman -Sy pacman-contrib
+  cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.tmp
+  echo "Rankmirrors..."
+  rankmirrors /etc/pacman.d/mirrorlist.tmp >/etc/pacman.d/mirrorlist
+  rm /etc/pacman.d/mirrorlist.tmp
+  # allow global read access (required for non-root yaourt execution)
+  chmod +r /etc/pacman.d/mirrorlist
+  $EDITOR /etc/pacman.d/mirrorlist
+}
+
+# *--------------------------------------------
+
+# *--------------------------------------------
 # !Before Menu
+print_title "https://wiki.archlinux.org/index.php/Installation_guide"
+print_info "Script para la ayuda de instalacion basica de Arch."
+wait_enter
+check_connection
+check_boot_system
+pacman -Sy
 # *--------------------------------------------
 
 # *--------------------------------------------
 # !MAIN MENU
-# *--------------------------------------------
+
 while true; do
   print_title "Opciones de instalacion"
+  echo "  Boot System: ${BOOT_SYSTEM}"
+  echo ""
+  echo ""
   echo "  1) $(mainmenu_item "${checklist[1]}" "Seleccion keymap" "${KEYMAP}")"
-  echo ""
-  echo "  2) $(mainmenu_item "${checklist[2]}" "Option 2" "2")"
-  echo ""
+  echo "  2) $(mainmenu_item "${checklist[2]}" "Select Editor" "${EDITOR}")"
   echo "  3) $(mainmenu_item "${checklist[3]}" "Option 3" "3")"
   echo ""
   echo "  d) done"
   echo ""
-  read option
+  read -p "$prompt1" option
   case $option in
   1)
     echo "Option 1"
+    select_keymap
     checklist[1]=1
-    KEYMAP=vim
     wait_enter
     ;;
   2)
-    echo "Option 2"
+    select_editor
     checklist[2]=1
     wait_enter
     ;;
@@ -53,8 +132,9 @@ while true; do
     wait_enter 0
     ;;
   *)
-    wait_enter 0
+    invalid_option
     ;;
   esac
 
 done
+# *--------------------------------------------
