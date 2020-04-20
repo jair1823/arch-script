@@ -163,7 +163,7 @@ format_partitions() {
       fsck $1
       mkdir -p $2
       mount -t ${filesystem} $1 $2
-      disable_partion
+      disable_partition
     fi
   }
 
