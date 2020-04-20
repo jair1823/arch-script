@@ -61,14 +61,14 @@ select_mirrors() {
   sed -i 's/^#Server/Server/g' ${tempFile}
 
   #copiando el nuevo mirrorlist solo si no esta vacio
-  if [[ -s ${tmpfile} ]]; then
+  if [[ -s ${tempFile} ]]; then
     {
       echo " Backing up the original mirrorlist..."
       mv -i /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.orig
     } &&
       {
         echo " Rotating the new list into place..."
-        mv -i ${tmpfile} /etc/pacman.d/mirrorlist
+        mv -i ${tempFile} /etc/pacman.d/mirrorlist
       }
   else
     echo " Unable to update, could not download list."
