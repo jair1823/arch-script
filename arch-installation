@@ -159,7 +159,7 @@ format_partitions() {
       #aqui puedo hacer una funcion de selecionar filesystem
       filesystem=$3
       mkfs.${filesystem} $1 \
-        $([[ ${filesystem} == fat ]] && echo "-F32")
+        $([[ ${filesystem} == vfat ]] && echo "-F32")
       fsck $1
       mkdir -p $2
       mount -t ${filesystem} $1 $2
@@ -217,7 +217,7 @@ format_partitions() {
             format_partition "${partition}" "${MOUNTPOINT}" ext4
             ;;
           EFI)
-            format_partition "${partition}" "${MOUNTPOINT}${EFI_MOUNTPOINT}" fat
+            format_partition "${partition}" "${MOUNTPOINT}${EFI_MOUNTPOINT}" vfat
             ;;
           another)
             print_danger "Another"
