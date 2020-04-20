@@ -36,6 +36,13 @@ UEFI=0
 SUCCESS=0
 FAIL=1
 EFIVARS_DIR=/sys/firmware/efi/efivars
+
+#! MOUNTPOINT
+EFI_MOUNTPOINT="/boot"
+ROOT_MOUNTPOINT="/dev/sda1"
+BOOT_MOUNTPOINT="/dev/sda"
+MOUNTPOINT="/mnt"
+
 # !prompt
 prompt1="Enter your option: "
 # *--------------------------------------------
@@ -118,6 +125,11 @@ mainmenu_item() {
 
 # *--------------------------------------------
 # ! Funciones de lectura
+read_input_text() {
+  read -p "$1 [y/N]: " OPTION
+  echo ""
+  OPTION=$(echo "$OPTION" | tr '[:upper:]' '[:lower:]')
+}
 # *--------------------------------------------
 
 # *--------------------------------------------
