@@ -177,28 +177,15 @@ format_partitions() {
   }
 
   create_swap() {
-    swap_options=("partition")
-    PS3="$prompt1"
-    echo -e "Select ${BYellow}${partition_name[i]}${Reset} filesystem:\n"
-    select OPT in "${swap_options[@]}"; do
-      case "$REPLY" in
-      1)
-        select partition in "${partitions_list[@]}"; do
-          #get the selected number - 1
-          partition_number=$(($REPLY - 1))
-          if contains_element "${partition}" "${partitions_list[@]}"; then
-            format_swap_partition "${partition}"
-          fi
-          break
-        done
-        swap_type="partition"
-        break
-        ;;
-      *)
-        invalid_option
-        ;;
-      esac
+    select partition in "${partitions_list[@]}"; do
+      #get the selected number - 1
+      partition_number=$(($REPLY - 1))
+      if contains_element "${partition}" "${partitions_list[@]}"; then
+        format_swap_partition "${partition}"
+      fi
+      break
     done
+    swap_type="partition"
   }
 
   while true; do
