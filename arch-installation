@@ -40,7 +40,7 @@ select_editor() {
   print_info "Se selecciona e instala el editor que se usara por defecto."
   select EDITOR in "${editor_list[@]}"; do
     if contains_element "$EDITOR" "${editor_list[@]}"; then
-      pacman -Sy --needed "$EDITOR"
+      pacman -Sy --needed "$EDITOR" --noconfirm
       break
     else
       invalid_option
@@ -50,8 +50,8 @@ select_editor() {
 
 #! select mirrors
 select_mirrors() {
-  # todo Lista de seleccion
-  country_code="FR"
+  #todo Lista de seleccion
+  country_code="US"
   country_name="Unite States"
   url="https://www.archlinux.org/mirrorlist/?country=${country_code}&use_mirror_status=on"
   #archivo temporal
@@ -74,7 +74,7 @@ select_mirrors() {
     echo " Unable to update, could not download list."
   fi
   # better repo should go first
-  pacman -Sy pacman-contrib
+  pacman -Sy pacman-contrib --noconfirm
   cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.tmp
   echo "Rankmirrors..."
   rankmirrors /etc/pacman.d/mirrorlist.tmp >/etc/pacman.d/mirrorlist
