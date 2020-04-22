@@ -121,7 +121,6 @@ format_partitions() {
   i=0
 
   block_list=($(lsblk | grep 'part\|lvm' | awk '{print substr($1,3)}'))
-
   # check if there is no partition
   if [[ ${#block_list[@]} -eq 0 ]]; then
     echo "No partition found"
@@ -248,7 +247,8 @@ while true; do
   echo "  1) $(mainmenu_item "${checklist[1]}" "Select keymap" "${KEYMAP}")"
   echo "  2) $(mainmenu_item "${checklist[2]}" "Select Editor" "${EDITOR}")"
   echo "  3) $(mainmenu_item "${checklist[3]}" "Select Mirrors" "${country_name} ${country_code}")"
-  echo "  4) $(mainmenu_item "${checklist[4]}" "Create partions" "Ready")"
+  echo "  4) $(mainmenu_item "${checklist[4]}" "Create partions" "Partions ready")"
+  echo "  5) $(mainmenu_item "${checklist[5]}" "Install Base System")"
   echo ""
   echo "  d) done"
   echo ""
@@ -271,6 +271,9 @@ while true; do
     create_partition
     format_partitions
     checklist[4]=1
+    ;;
+  5)
+    checklist[5]=1
     ;;
   d)
     wait_enter 0
